@@ -1,3 +1,6 @@
 rootProject.name = 'Spring-Redis'
 include 'redis-sample'
+include 'redis-crud'
+include 'redis-pub'
+include 'redis-sub'
 

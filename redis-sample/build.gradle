@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group = 'com.villainscode'
+group = 'com.villainscode.redis'
 version = '0.0.1-SNAPSHOT'
 
 repositories {
@@ -10,12 +10,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-    annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
 }
 
 test {
