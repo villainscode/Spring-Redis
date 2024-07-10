@@ -1,0 +1,50 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.3.1'
+    id 'io.spring.dependency-management' version '1.1.5'
+}
+
+group = 'com.villainscode'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '17'
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+// 하위 프로젝트 모듈의 공통 플러그인 및 의존성 정의
+subprojects {
+    apply plugin: 'java-library'
+    apply plugin: 'idea'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'java'
+    compileJava.options.encoding = 'UTF-8'
+    sourceCompatibility = '17'
+
+    task wrapper(type: Wrapper) {
+        gradleVersion = '8.1.1'
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        implementation 'org.apache.commons:commons-lang3:3.12.0'
+        implementation 'org.apache.commons:commons-compress:1.23.0'
+        implementation 'com.google.guava:guava:31.1-jre'
+        implementation 'org.modelmapper:modelmapper:3.0.0'
+
+    }
+
+
+    tasks.named('test') {
+        useJUnitPlatform()
+    }
+}
