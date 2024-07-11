@@ -22,7 +22,7 @@
 
 > **신입 및 주니어 개발직군의 취업 및 이직을 위한 가이드**
 >
-> 서류 작성 방법부터 , 유망한 회사를 찾는 방법, 코딩 테스트와 기술 면접을 준비하기 위해 알아야 할 개념들을 어떤 방식으로 접근해야 하는지 설명했습니다.
+> 서류 작성 방법부터, 유망한 회사를 찾는 방법, 코딩 테스트와 기술 면접을 준비하기 위해 알아야 할 개념들을 어떤 방식으로 접근해야 하는지 설명했습니다.
 >
 > 특히 면접에서 면접관이 던지는 질문의 의도와 해당 질문에 올바르게 답변하기 위한 실질적인 대처방법에 대해서 기술하였습니다.
 > 아울러 기술면접을 넘어 인성면접에서 가져야할 마음가짐과 리더십 원칙, 정답이 없는 질문에 대처하기 위한 사례들을 소개하였습니다.
@@ -33,9 +33,15 @@
 
 ---
 
-레디스는 메모리에 데이터를 관리하므로 매우 빠른 속도로 데이터를 조회/저장 할 수 있다. 싱글 스레드 방식으로 동작하며, 데이터 영속성 또한 제공한다. (AOF, RDB) 일반적으로 RDB 방식으로 백업 데이터를 일별로 만들고, 만든 시점 이후부터는 AOF(Append Only File) 형태로 당일 변경사항에 대해서 백업하는 형태로 영속성을 유지할 수 있다.
+Redis는 인메모리 데이터 구조 저장소로, 매우 빠른 속도로 데이터를 조회/저장할 수 있습니다. 
 
-Event Loop 방식으로 클라이언트가 실행한 명령어들을 이벤트 큐에 적재하고, 싱글 스레드로 하나씩 처리한다.
+key, value 저장소로 유명하지만 단순한 key-value 저장소를 넘어 다양한 데이터 구조(문자열, 리스트, 해시, 셋 등)를 지원하며, 주로 캐싱 시스템으로 사용되어 데이터베이스 부하를 줄이고 애플리케이션 성능을 향상시킵니다.
+
+Redis는 싱글 스레드 이벤트 루프 방식으로 동작하며, 클라이언트가 실행한 명령어들을 이벤트 큐에 적재하고 하나씩 처리합니다. 이 방식은 초당 수만 건의 연산을 처리할 수 있는 높은 성능을 제공합니다.
+데이터 영속성은 AOF(Append Only File)와 RDB(Redis Database) 두 가지 방식으로 제공됩니다.
+일반적으로 RDB 방식으로 일별 백업 데이터를 만들고, 그 이후부터는 AOF 형태로 당일 변경사항을 백업하는 형태로 영속성을 유지합니다.
+
+또한, Redis는 복제 및 클러스터링 기능을 통해 고가용성과 확장성을 제공하며, Pub/Sub 메시징 시스템과 트랜잭션 기능도 지원합니다. 메모리 관리를 위해 다양한 정책(예: LRU, LFU)을 제공하여 제한된 메모리 환경에서도 효율적으로 동작할 수 있습니다
 
 ## 아키텍처
 
@@ -297,7 +303,7 @@ SREM으로 원하는 데이터를 삭제할 수 있고, SPOP으로 내부 아이
 
 ```jsx
 > KEYS [pattern] | * // 패턴 조회 혹은 모든 키 조회 
-- KEYS 수행 비용은 높기 때문에 수십만개의 키 정보를 반환하는 것은 helth check 응답이 없어 페일오버가 날 수 있다. (다른 커맨드도 사용불가) 
+- KEYS 수행 비용은 높기 때문에 수십만개의 키 정보를 반환하는 것은 health check 응답이 없어 페일오버가 날 수 있다. (다른 커맨드도 사용불가) 
 ```
 
 ### Pattern 스타일
@@ -368,7 +374,187 @@ TTL의 경우 키의 만료시간을 반환한다.
 
 그밖에 레디스를 캐시로 사용하거나 세션 스토어로 사용하거나 메시지 브로커 등으로 활용할 수 있다.
 
-# 프로젝트 설정 
+## Redis 모니터링
+### INFO 
+Redis 서버의 전반적인 상태를 확인할 수 있는 가장 기본적인 명령어이다.
+```jsx
+> INFO
+```
+이 명령어는 서버, 클라이언트, 메모리, 영속성 등 다양한 섹션의 정보를 제공한다.
+
+### MONITOR
+실시간으로 Redis 서버에서 처리되는 명령어를 볼 수 있다.
+
+```jsx
+> MONITOR
+```
+주의: 프로덕션 환경에서는 성능에 영향을 줄 수 있으므로 주의해서 사용해야 한다.
+
+### SLOWLOG
+설정된 실행 시간 임계값을 초과한 명령어들의 로그를 확인할 수 있다.
+
+```jsx
+> SLOWLOG GET [number]
+```
+
+### 외부 모니터링 도구
+
+- Redis-cli: 기본 제공되는 CLI 도구로, 다양한 모니터링 명령어를 지원
+- Redis-stat: Redis 서버의 실시간 통계를 보여주는 CLI 도구 
+- Redis Commander: 웹 기반의 Redis 관리 도구로, 데이터 조회 및 수정이 가능 
+- Prometheus + Grafana: 메트릭 수집 및 시각화를 위한 강력한 조합
+
+### 주요 모니터링 지표
+- 메모리 사용량
+- 연결된 클라이언트 수
+- 초당 처리되는 명령어 수
+- 키스페이스 히트/미스 비율
+- 네트워크 대역폭 사용량
+
+## Redis 실제 사용 사례
+### 세션 저장소
+웹 애플리케이션에서 사용자 세션 정보를 Redis에 저장하여 빠른 접근과 분산 환경에서의 세션 공유를 구현할 수 있다.
+
+### 세션 저장소
+
+웹 애플리케이션에서 사용자 세션 정보를 Redis에 저장하여 빠른 접근과 분산 환경에서의 세션 공유를 구현할 수 있다.
+
+```java
+// Java Spring Boot 예시
+@Configuration
+@EnableRedisHttpSession
+public class SessionConfig {
+    
+    @Bean
+    public LettuceConnectionFactory connectionFactory() {
+        return new LettuceConnectionFactory();
+    }
+}
+
+// 사용 예
+@RestController
+public class SessionController {
+    
+    @GetMapping("/set-session")
+    public String setSession(HttpSession session) {
+        session.setAttribute("username", "John Doe");
+        return "Session set";
+    }
+    
+    @GetMapping("/get-session")
+    public String getSession(HttpSession session) {
+        return (String) session.getAttribute("username");
+    }
+}
+```
+
+### 캐싱
+데이터베이스 쿼리 결과나 API 응답을 Redis에 캐싱하여 응답 시간을 크게 줄일 수 있다.
+```java
+// Java Spring 예시
+@Cacheable(value = "userCache", key = "#userId")
+public User getUserById(String userId) {
+    // 데이터베이스에서 사용자 정보를 가져오는 로직
+}
+```
+
+### 실시간 랭킹 시스템
+게임이나 리더보드에서 Sorted Set을 사용하여 실시간 랭킹을 구현할 수 있다.
+```jsx
+> ZADD leaderboard 1000 "user:1"
+> ZADD leaderboard 2000 "user:2"
+> ZREVRANGE leaderboard 0 9 WITHSCORES  // 상위 10명 조회
+```
+### 메시지 큐
+List 자료구조를 사용하여 간단한 메시지 큐를 구현할 수 있다.
+```jsx
+> LPUSH tasks "task:1"
+> RPOP tasks  // 작업 처리
+```
+### 실시간 분석
+HyperLogLog를 사용하여 대규모 데이터의 카디널리티를 추정할 수 있다. 예를 들어, 웹사이트의 일일 순 방문자 수를 추정할 수 있다.
+```jsx
+> PFADD daily_visitors "user:1" "user:2" "user:3"
+> PFCOUNT daily_visitors
+```
+
+### 속도 제한(Rate Limiting)
+API 요청의 속도를 제한하는 데 Redis를 사용할 수 있다. 
+
+
+### 7. 속도 제한(Rate Limiting)
+
+API 요청의 속도를 제한하는 데 Redis를 사용할 수 있다.
+
+```java
+@Service
+public class RateLimiter {
+    private final StringRedisTemplate redisTemplate;
+
+    public RateLimiter(StringRedisTemplate redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
+
+    public boolean allowRequest(String userId, int maxRequests, int timeWindowSeconds) {
+        String key = "rate_limit:" + userId;
+        long currentTime = System.currentTimeMillis() / 1000;
+
+        List<Object> txResults = redisTemplate.execute(new SessionCallback<List<Object>>() {
+            @Override
+            public List<Object> execute(RedisOperations operations) throws DataAccessException {
+                operations.multi();
+                operations.opsForZSet().add(key, String.valueOf(currentTime), currentTime);
+                operations.opsForZSet().removeRangeByScore(key, 0, currentTime - timeWindowSeconds);
+                operations.opsForZSet().size(key);
+                return operations.exec();
+            }
+        });
+
+        // 트랜잭션 결과 검증
+        if (txResults == null || txResults.isEmpty()) {
+            throw new RuntimeException("Redis transaction failed");
+        }
+
+        // 마지막 결과(size 연산)가 Long 타입인지 확인
+        if (!(txResults.get(txResults.size() - 1) instanceof Long)) {
+            throw new RuntimeException("Unexpected result type from Redis transaction");
+        }
+
+        Long requestCount = (Long) txResults.get(txResults.size() - 1);
+
+        // 만료 시간 설정 (트랜잭션 외부에서 수행)
+        redisTemplate.expire(key, timeWindowSeconds, TimeUnit.SECONDS);
+
+        return requestCount <= maxRequests;
+    }
+}
+
+// 사용 예
+@RestController
+public class ApiController {
+    private final RateLimiter rateLimiter;
+
+    public ApiController(RateLimiter rateLimiter) {
+        this.rateLimiter = rateLimiter;
+    }
+
+    @GetMapping("/api/resource")
+    public ResponseEntity<String> getResource(@RequestHeader("User-Id") String userId) {
+        try {
+            if (!rateLimiter.allowRequest(userId, 10, 60)) {
+                return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body("Rate limit exceeded");
+            }
+            // 실제 리소스 처리 로직
+            return ResponseEntity.ok("Resource data");
+        } catch (Exception e) {
+            // 로깅 추가
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
+        }
+    }
+}
+```
+
+# Redis Quick Guide 프로젝트 설정 
 
 ---
 
