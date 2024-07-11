@@ -558,7 +558,7 @@ public class ApiController {
 > redis-pub/sub : message publish/subscribe 예제 
 > 
 
-root의 build.gradle은 아래와 같다. 하위 프로젝트들은 root의 설정에 의존성을 갖는다.
+root의 build.gradle은 아래와 같다. 하위 프로젝트들은 root의 설정에 의존성을 갖지만 root에는 소스가 없고 gradle 디펜던시만 맺도록 멀티 프로젝트를 구성한다. (다른 모듈관 의존 관계 없음)
 ```groovy
 plugins {
     id 'java'
