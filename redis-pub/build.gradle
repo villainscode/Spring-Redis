@@ -2,6 +2,7 @@ plugins {
     id 'java'
 }
 
+
 group = 'com.villainscode'
 version = '0.0.1-SNAPSHOT'
 
@@ -10,8 +11,8 @@ repositories {
 }
 
 dependencies {
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    //implementation group: 'org.hibernate.validator', name: 'hibernate-validator', version: '7.0.5.Final'
 }
 
 test {

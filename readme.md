@@ -1,4 +1,4 @@
-# Spring Redis 샘플 소스
+# Spring Redis Quick Guide
 
 ---
 > 본 내용은 한빛미디어에서 출간한 책(개발자 기술 면접 노트)의 일부 내용을 보강하기 위해서 만든 Redis 활용 예제입니다.<br>
@@ -449,7 +449,7 @@ subprojects {
 }
 
 ```
-root의 settings.gradle을 아래와 같다. 하위 프로젝트 생성 후 gradle refresh 하면 자동으로 추가된다.
+root의 settings.gradle을 아래와 같다. 하위 프로젝트 생성 후 gradle refresh 하면 자동으로 추가되는 것을 확인할 수 있다.
 ```groovy
 rootProject.name = 'Spring-Redis'
 include 'redis-sample'
@@ -459,5 +459,38 @@ include 'redis-sub'
 ```
 각 하위 프로젝트는 해당 프로젝트에서 필요한 모듈의 dependencies들을 각 build.gradle 에 추가해준 후 사용하면 된다.
 
+기본 예제(redis-sample)는 특별한 라이브러리가 필요하지 않다.
+하지만 redis-crud나 pub/sub 관련 모듈들은 spring-boot-starter-web 라이브러리가 필요하다. 각 모듈 하위의 build.gradle 파일을 참조하기 바란다.
 
+또 sample이나 crud는 기본 포트인 8080으로 실행되지만 pub/sub은 따로 메시지를 주고 받아야 하므로 properties에서 server.port를 각각 8081, 8082로 설정했다.
 
+각각의 모듈들을 호출하는 .http 샘플은 아래와 같다.
+
+```http request
+### redis-sample Send message to testChannel
+POST http://localhost:8080/message/testChannel
+Content-Type: application/json
+
+{
+  "message": "Hello, this is a test message."
+}
+
+### redis-crud
+GET http://localhost:8080/api/v1/keys
+
+### redis-crud
+GET http://localhost:8080/api/v1/getAll
+
+### redis-pub Publish OrderQueue
+POST http://localhost:8081/publish
+Content-Type: application/json
+
+{
+  "id": "order123",
+  "userId": "user456",
+  "productName": "Laptop",
+  "price": 1200,
+  "qty": 2
+}
+
+```
