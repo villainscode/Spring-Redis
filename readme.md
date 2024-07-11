@@ -409,7 +409,6 @@ Redis 서버의 전반적인 상태를 확인할 수 있는 가장 기본적인 
 웹 애플리케이션에서 사용자 세션 정보를 Redis에 저장하여 빠른 접근과 분산 환경에서의 세션 공유를 구현할 수 있다.
 
 ```java
-// Java Spring Boot 예시
 @Configuration
 @EnableRedisHttpSession
 public class SessionConfig {
@@ -440,7 +439,6 @@ public class SessionController {
 ### 캐싱
 데이터베이스 쿼리 결과나 API 응답을 Redis에 캐싱하여 응답 시간을 크게 줄일 수 있다.
 ```java
-// Java Spring 예시
 @Cacheable(value = "userCache", key = "#userId")
 public User getUserById(String userId) {
     // 데이터베이스에서 사용자 정보를 가져오는 로직
