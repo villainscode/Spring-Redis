@@ -54,14 +54,16 @@ Redis는 싱글 스레드 이벤트 루프 방식으로 동작하며, 클라이�
 
 ## 설치(MacOS, brew 설치 환경 기준)
 
-> brew install redis
+> $ brew install redis
 >
 
 ## 실행
 
-> brew services start redis or redis-server
-brew services stop redis or Ctrl + c
+> $ brew services start redis or redis-server (foreground 실행)
+> 
+> $ brew services stop redis or foreground 실행 화면에서 Ctrl + c
 >
+> $ brew services restart redis
 
 ## 일반 커맨드
 
@@ -628,7 +630,7 @@ include 'redis-sub'
 
 또 sample이나 crud는 기본 포트인 8080으로 실행되지만 pub/sub은 따로 메시지를 주고 받아야 하므로 properties에서 server.port를 각각 8081, 8082로 설정했다.
 
-각각의 모듈들을 호출하는 .http 샘플은 아래와 같다.
+각각의 모듈들을 실행한 뒤 API를 호출하는 .http 샘플은 아래와 같다. (.http 사용법에 대해서는 `intellij .http`로 구글링 하기 바란다 )
 
 ```http request
 ### redis-sample Send message to testChannel
